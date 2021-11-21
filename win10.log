@@ -1,0 +1,212 @@
+2021-11-21 16:15:15.009+0000: starting up libvirt version: 7.9.0, qemu version: 6.1.0, kernel: 5.15.2-arch1-1, hostname: jackie-arch
+LC_ALL=C \
+PATH=/usr/local/sbin:/usr/local/bin:/usr/bin \
+HOME=/var/lib/libvirt/qemu/domain-1-win10 \
+XDG_DATA_HOME=/var/lib/libvirt/qemu/domain-1-win10/.local/share \
+XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain-1-win10/.cache \
+XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain-1-win10/.config \
+/usr/bin/qemu-system-x86_64 \
+-name guest=win10,debug-threads=on \
+-S \
+-object '{"qom-type":"secret","id":"masterKey0","format":"raw","file":"/var/lib/libvirt/qemu/domain-1-win10/master-key.aes"}' \
+-blockdev '{"driver":"file","filename":"/usr/share/edk2-ovmf/x64/OVMF_CODE.fd","node-name":"libvirt-pflash0-storage","auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-pflash0-format","read-only":true,"driver":"raw","file":"libvirt-pflash0-storage"}' \
+-blockdev '{"driver":"file","filename":"/var/lib/libvirt/qemu/nvram/win10_VARS.fd","node-name":"libvirt-pflash1-storage","auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-pflash1-format","read-only":false,"driver":"raw","file":"libvirt-pflash1-storage"}' \
+-machine pc-q35-6.1,accel=kvm,usb=off,vmport=off,dump-guest-core=off,pflash0=libvirt-pflash0-format,pflash1=libvirt-pflash1-format,memory-backend=pc.ram \
+-cpu host,migratable=on,smep=off,hv-time=on,hv-relaxed=on,hv-vapic=on,hv-spinlocks=0x1fff \
+-m 10000 \
+-object '{"qom-type":"memory-backend-ram","id":"pc.ram","size":10485760000}' \
+-overcommit mem-lock=off \
+-smp 4,sockets=1,dies=1,cores=4,threads=1 \
+-uuid 78616f0b-b856-4d9a-9560-20968892f376 \
+-display none \
+-no-user-config \
+-nodefaults \
+-chardev socket,id=charmonitor,fd=32,server=on,wait=off \
+-mon chardev=charmonitor,id=monitor,mode=control \
+-rtc base=localtime,driftfix=slew \
+-global kvm-pit.lost_tick_policy=delay \
+-no-hpet \
+-no-shutdown \
+-global ICH9-LPC.disable_s3=1 \
+-global ICH9-LPC.disable_s4=1 \
+-boot menu=on,strict=on \
+-device pcie-root-port,port=16,chassis=1,id=pci.1,bus=pcie.0,multifunction=on,addr=0x2 \
+-device pcie-root-port,port=17,chassis=2,id=pci.2,bus=pcie.0,addr=0x2.0x1 \
+-device pcie-root-port,port=18,chassis=3,id=pci.3,bus=pcie.0,addr=0x2.0x2 \
+-device pcie-root-port,port=19,chassis=4,id=pci.4,bus=pcie.0,addr=0x2.0x3 \
+-device pcie-root-port,port=20,chassis=5,id=pci.5,bus=pcie.0,addr=0x2.0x4 \
+-device pcie-root-port,port=8,chassis=6,id=pci.6,bus=pcie.0,multifunction=on,addr=0x1 \
+-device pcie-root-port,port=9,chassis=7,id=pci.7,bus=pcie.0,addr=0x1.0x1 \
+-device pcie-root-port,port=10,chassis=8,id=pci.8,bus=pcie.0,addr=0x1.0x2 \
+-device pcie-pci-bridge,id=pci.9,bus=pci.8,addr=0x0 \
+-device pcie-root-port,port=11,chassis=10,id=pci.10,bus=pcie.0,addr=0x1.0x3 \
+-device qemu-xhci,p2=15,p3=15,id=usb,bus=pci.2,addr=0x0 \
+-device virtio-serial-pci,id=virtio-serial0,bus=pci.3,addr=0x0 \
+-blockdev '{"driver":"file","filename":"/var/lib/libvirt/images/win10.qcow2","node-name":"libvirt-1-storage","cache":{"direct":false,"no-flush":false},"auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-1-format","read-only":false,"cache":{"direct":false,"no-flush":false},"driver":"qcow2","file":"libvirt-1-storage","backing":null}' \
+-device virtio-blk-pci,bus=pci.5,addr=0x0,drive=libvirt-1-format,id=virtio-disk0,bootindex=2,write-cache=on \
+-netdev tap,fd=34,id=hostnet0 \
+-device e1000e,netdev=hostnet0,id=net0,mac=52:54:00:c2:27:23,bus=pci.1,addr=0x0 \
+-device usb-tablet,id=input0,bus=usb.0,port=1 \
+-audiodev id=audio1,driver=spice \
+-device ich9-intel-hda,id=sound0,bus=pcie.0,addr=0x1b \
+-device hda-duplex,id=sound0-codec0,bus=sound0.0,cad=0,audiodev=audio1 \
+-chardev spicevmc,id=charredir0,name=usbredir \
+-device usb-redir,chardev=charredir0,id=redir0,bus=usb.0,port=2 \
+-chardev spicevmc,id=charredir1,name=usbredir \
+-device usb-redir,chardev=charredir1,id=redir1,bus=usb.0,port=3 \
+-device vfio-pci,host=0000:01:00.0,id=hostdev0,bus=pci.6,addr=0x0,romfile=/var/lib/libvirt/vbios/GPU.rom \
+-device vfio-pci,host=0000:01:00.1,id=hostdev1,bus=pci.7,addr=0x0,romfile=/var/lib/libvirt/vbios/GPU.rom \
+-device vfio-pci,host=0000:00:1d.0,id=hostdev2,bus=pci.9,addr=0x1 \
+-device vfio-pci,host=0000:00:1a.0,id=hostdev3,bus=pci.9,addr=0x2 \
+-device vfio-pci,host=0000:00:1b.0,id=hostdev4,bus=pci.10,addr=0x0 \
+-device vfio-pci,host=0000:00:14.0,id=hostdev5,bus=pci.9,addr=0x3 \
+-sandbox on,obsolete=deny,elevateprivileges=deny,spawn=deny,resourcecontrol=deny \
+-msg timestamp=on
+audio: Could not init `spice' audio driver
+audio: warning: Using timer based audio emulation
+2021-11-21 16:17:04.736+0000: starting up libvirt version: 7.9.0, qemu version: 6.1.0, kernel: 5.15.2-arch1-1, hostname: jackie-arch
+LC_ALL=C \
+PATH=/usr/local/sbin:/usr/local/bin:/usr/bin \
+HOME=/var/lib/libvirt/qemu/domain-1-win10 \
+XDG_DATA_HOME=/var/lib/libvirt/qemu/domain-1-win10/.local/share \
+XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain-1-win10/.cache \
+XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain-1-win10/.config \
+/usr/bin/qemu-system-x86_64 \
+-name guest=win10,debug-threads=on \
+-S \
+-object '{"qom-type":"secret","id":"masterKey0","format":"raw","file":"/var/lib/libvirt/qemu/domain-1-win10/master-key.aes"}' \
+-blockdev '{"driver":"file","filename":"/usr/share/edk2-ovmf/x64/OVMF_CODE.fd","node-name":"libvirt-pflash0-storage","auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-pflash0-format","read-only":true,"driver":"raw","file":"libvirt-pflash0-storage"}' \
+-blockdev '{"driver":"file","filename":"/var/lib/libvirt/qemu/nvram/win10_VARS.fd","node-name":"libvirt-pflash1-storage","auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-pflash1-format","read-only":false,"driver":"raw","file":"libvirt-pflash1-storage"}' \
+-machine pc-q35-6.1,accel=kvm,usb=off,vmport=off,dump-guest-core=off,pflash0=libvirt-pflash0-format,pflash1=libvirt-pflash1-format,memory-backend=pc.ram \
+-cpu host,migratable=on,smep=off,hv-time=on,hv-relaxed=on,hv-vapic=on,hv-spinlocks=0x1fff \
+-m 10000 \
+-object '{"qom-type":"memory-backend-ram","id":"pc.ram","size":10485760000}' \
+-overcommit mem-lock=off \
+-smp 4,sockets=1,dies=1,cores=4,threads=1 \
+-uuid 78616f0b-b856-4d9a-9560-20968892f376 \
+-display none \
+-no-user-config \
+-nodefaults \
+-chardev socket,id=charmonitor,fd=32,server=on,wait=off \
+-mon chardev=charmonitor,id=monitor,mode=control \
+-rtc base=localtime,driftfix=slew \
+-global kvm-pit.lost_tick_policy=delay \
+-no-hpet \
+-no-shutdown \
+-global ICH9-LPC.disable_s3=1 \
+-global ICH9-LPC.disable_s4=1 \
+-boot menu=on,strict=on \
+-device pcie-root-port,port=16,chassis=1,id=pci.1,bus=pcie.0,multifunction=on,addr=0x2 \
+-device pcie-root-port,port=17,chassis=2,id=pci.2,bus=pcie.0,addr=0x2.0x1 \
+-device pcie-root-port,port=18,chassis=3,id=pci.3,bus=pcie.0,addr=0x2.0x2 \
+-device pcie-root-port,port=19,chassis=4,id=pci.4,bus=pcie.0,addr=0x2.0x3 \
+-device pcie-root-port,port=20,chassis=5,id=pci.5,bus=pcie.0,addr=0x2.0x4 \
+-device pcie-root-port,port=8,chassis=6,id=pci.6,bus=pcie.0,multifunction=on,addr=0x1 \
+-device pcie-root-port,port=9,chassis=7,id=pci.7,bus=pcie.0,addr=0x1.0x1 \
+-device pcie-root-port,port=10,chassis=8,id=pci.8,bus=pcie.0,addr=0x1.0x2 \
+-device pcie-pci-bridge,id=pci.9,bus=pci.8,addr=0x0 \
+-device pcie-root-port,port=11,chassis=10,id=pci.10,bus=pcie.0,addr=0x1.0x3 \
+-device qemu-xhci,p2=15,p3=15,id=usb,bus=pci.2,addr=0x0 \
+-device virtio-serial-pci,id=virtio-serial0,bus=pci.3,addr=0x0 \
+-blockdev '{"driver":"file","filename":"/var/lib/libvirt/images/win10.qcow2","node-name":"libvirt-1-storage","cache":{"direct":false,"no-flush":false},"auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-1-format","read-only":false,"cache":{"direct":false,"no-flush":false},"driver":"qcow2","file":"libvirt-1-storage","backing":null}' \
+-device virtio-blk-pci,bus=pci.5,addr=0x0,drive=libvirt-1-format,id=virtio-disk0,bootindex=2,write-cache=on \
+-netdev tap,fd=34,id=hostnet0 \
+-device e1000e,netdev=hostnet0,id=net0,mac=52:54:00:c2:27:23,bus=pci.1,addr=0x0 \
+-device usb-tablet,id=input0,bus=usb.0,port=1 \
+-audiodev id=audio1,driver=spice \
+-device ich9-intel-hda,id=sound0,bus=pcie.0,addr=0x1b \
+-device hda-duplex,id=sound0-codec0,bus=sound0.0,cad=0,audiodev=audio1 \
+-chardev spicevmc,id=charredir0,name=usbredir \
+-device usb-redir,chardev=charredir0,id=redir0,bus=usb.0,port=2 \
+-chardev spicevmc,id=charredir1,name=usbredir \
+-device usb-redir,chardev=charredir1,id=redir1,bus=usb.0,port=3 \
+-device vfio-pci,host=0000:01:00.0,id=hostdev0,bus=pci.6,addr=0x0,romfile=/var/lib/libvirt/vbios/GPU.rom \
+-device vfio-pci,host=0000:01:00.1,id=hostdev1,bus=pci.7,addr=0x0,romfile=/var/lib/libvirt/vbios/GPU.rom \
+-device vfio-pci,host=0000:00:1d.0,id=hostdev2,bus=pci.9,addr=0x1 \
+-device vfio-pci,host=0000:00:1a.0,id=hostdev3,bus=pci.9,addr=0x2 \
+-device vfio-pci,host=0000:00:1b.0,id=hostdev4,bus=pci.10,addr=0x0 \
+-device vfio-pci,host=0000:00:14.0,id=hostdev5,bus=pci.9,addr=0x3 \
+-sandbox on,obsolete=deny,elevateprivileges=deny,spawn=deny,resourcecontrol=deny \
+-msg timestamp=on
+audio: Could not init `spice' audio driver
+audio: warning: Using timer based audio emulation
+2021-11-21T16:17:07.549695Z qemu-system-x86_64: vfio: Cannot reset device 0000:00:14.0, no available reset mechanism.
+2021-11-21T16:17:08.755872Z qemu-system-x86_64: vfio: Cannot reset device 0000:00:14.0, no available reset mechanism.
+2021-11-21 16:40:34.424+0000: starting up libvirt version: 7.9.0, qemu version: 6.1.0, kernel: 5.15.2-arch1-1, hostname: jackie-arch
+LC_ALL=C \
+PATH=/usr/local/sbin:/usr/local/bin:/usr/bin \
+HOME=/var/lib/libvirt/qemu/domain-1-win10 \
+XDG_DATA_HOME=/var/lib/libvirt/qemu/domain-1-win10/.local/share \
+XDG_CACHE_HOME=/var/lib/libvirt/qemu/domain-1-win10/.cache \
+XDG_CONFIG_HOME=/var/lib/libvirt/qemu/domain-1-win10/.config \
+/usr/bin/qemu-system-x86_64 \
+-name guest=win10,debug-threads=on \
+-S \
+-object '{"qom-type":"secret","id":"masterKey0","format":"raw","file":"/var/lib/libvirt/qemu/domain-1-win10/master-key.aes"}' \
+-blockdev '{"driver":"file","filename":"/usr/share/edk2-ovmf/x64/OVMF_CODE.fd","node-name":"libvirt-pflash0-storage","auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-pflash0-format","read-only":true,"driver":"raw","file":"libvirt-pflash0-storage"}' \
+-blockdev '{"driver":"file","filename":"/var/lib/libvirt/qemu/nvram/win10_VARS.fd","node-name":"libvirt-pflash1-storage","auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-pflash1-format","read-only":false,"driver":"raw","file":"libvirt-pflash1-storage"}' \
+-machine pc-q35-6.1,accel=kvm,usb=off,vmport=off,dump-guest-core=off,pflash0=libvirt-pflash0-format,pflash1=libvirt-pflash1-format,memory-backend=pc.ram \
+-cpu host,migratable=on,smep=off,hv-time=on,hv-relaxed=on,hv-vapic=on,hv-spinlocks=0x1fff \
+-m 10000 \
+-object '{"qom-type":"memory-backend-ram","id":"pc.ram","size":10485760000}' \
+-overcommit mem-lock=off \
+-smp 4,sockets=1,dies=1,cores=4,threads=1 \
+-uuid 78616f0b-b856-4d9a-9560-20968892f376 \
+-display none \
+-no-user-config \
+-nodefaults \
+-chardev socket,id=charmonitor,fd=31,server=on,wait=off \
+-mon chardev=charmonitor,id=monitor,mode=control \
+-rtc base=localtime,driftfix=slew \
+-global kvm-pit.lost_tick_policy=delay \
+-no-hpet \
+-no-shutdown \
+-global ICH9-LPC.disable_s3=1 \
+-global ICH9-LPC.disable_s4=1 \
+-boot menu=on,strict=on \
+-device pcie-root-port,port=16,chassis=1,id=pci.1,bus=pcie.0,multifunction=on,addr=0x2 \
+-device pcie-root-port,port=17,chassis=2,id=pci.2,bus=pcie.0,addr=0x2.0x1 \
+-device pcie-root-port,port=18,chassis=3,id=pci.3,bus=pcie.0,addr=0x2.0x2 \
+-device pcie-root-port,port=19,chassis=4,id=pci.4,bus=pcie.0,addr=0x2.0x3 \
+-device pcie-root-port,port=20,chassis=5,id=pci.5,bus=pcie.0,addr=0x2.0x4 \
+-device pcie-root-port,port=8,chassis=6,id=pci.6,bus=pcie.0,multifunction=on,addr=0x1 \
+-device pcie-root-port,port=9,chassis=7,id=pci.7,bus=pcie.0,addr=0x1.0x1 \
+-device pcie-root-port,port=10,chassis=8,id=pci.8,bus=pcie.0,addr=0x1.0x2 \
+-device pcie-pci-bridge,id=pci.9,bus=pci.8,addr=0x0 \
+-device pcie-root-port,port=11,chassis=10,id=pci.10,bus=pcie.0,addr=0x1.0x3 \
+-device qemu-xhci,p2=15,p3=15,id=usb,bus=pci.2,addr=0x0 \
+-device virtio-serial-pci,id=virtio-serial0,bus=pci.3,addr=0x0 \
+-blockdev '{"driver":"file","filename":"/var/lib/libvirt/images/win10.qcow2","node-name":"libvirt-1-storage","cache":{"direct":false,"no-flush":false},"auto-read-only":true,"discard":"unmap"}' \
+-blockdev '{"node-name":"libvirt-1-format","read-only":false,"cache":{"direct":false,"no-flush":false},"driver":"qcow2","file":"libvirt-1-storage","backing":null}' \
+-device virtio-blk-pci,bus=pci.5,addr=0x0,drive=libvirt-1-format,id=virtio-disk0,bootindex=2,write-cache=on \
+-netdev tap,fd=33,id=hostnet0 \
+-device e1000e,netdev=hostnet0,id=net0,mac=52:54:00:c2:27:23,bus=pci.1,addr=0x0 \
+-device usb-tablet,id=input0,bus=usb.0,port=1 \
+-audiodev id=audio1,driver=spice \
+-device ich9-intel-hda,id=sound0,bus=pcie.0,addr=0x1b \
+-device hda-duplex,id=sound0-codec0,bus=sound0.0,cad=0,audiodev=audio1 \
+-chardev spicevmc,id=charredir0,name=usbredir \
+-device usb-redir,chardev=charredir0,id=redir0,bus=usb.0,port=2 \
+-chardev spicevmc,id=charredir1,name=usbredir \
+-device usb-redir,chardev=charredir1,id=redir1,bus=usb.0,port=3 \
+-device vfio-pci,host=0000:01:00.0,id=hostdev0,bus=pci.6,addr=0x0,romfile=/var/lib/libvirt/vbios/GPU.rom \
+-device vfio-pci,host=0000:01:00.1,id=hostdev1,bus=pci.7,addr=0x0,romfile=/var/lib/libvirt/vbios/GPU.rom \
+-device vfio-pci,host=0000:00:1d.0,id=hostdev2,bus=pci.9,addr=0x1 \
+-device vfio-pci,host=0000:00:1a.0,id=hostdev3,bus=pci.9,addr=0x2 \
+-device vfio-pci,host=0000:00:1b.0,id=hostdev4,bus=pci.10,addr=0x0 \
+-device vfio-pci,host=0000:00:14.0,id=hostdev5,bus=pci.9,addr=0x3 \
+-sandbox on,obsolete=deny,elevateprivileges=deny,spawn=deny,resourcecontrol=deny \
+-msg timestamp=on
+audio: Could not init `spice' audio driver
+audio: warning: Using timer based audio emulation
+2021-11-21T16:40:37.938605Z qemu-system-x86_64: vfio: Cannot reset device 0000:00:14.0, no available reset mechanism.
+2021-11-21T16:40:39.138545Z qemu-system-x86_64: vfio: Cannot reset device 0000:00:14.0, no available reset mechanism.
+                                                                                                                                                                        
